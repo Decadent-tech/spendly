@@ -1,6 +1,17 @@
 from flask import Flask, render_template
 
+from database.db import get_db, init_db, seed_db
+
 app = Flask(__name__)
+
+
+def bootstrap_db():
+    """Create tables and seed demo data. Only called from the __main__ guard
+    below — never at import time — so importing app.py (e.g. for pytest
+    collection) never touches the real database file."""
+    with app.app_context():
+        init_db()
+        seed_db()
 
 
 # ------------------------------------------------------------------ #
@@ -62,4 +73,5 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
+    bootstrap_db()
     app.run(debug=True, port=5001)
